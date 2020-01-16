@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: ca.airspeed.tsheets
+---
+testFramework: junit
+sourceLanguage: java

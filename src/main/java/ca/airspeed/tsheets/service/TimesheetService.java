@@ -12,8 +12,10 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.http.uri.UriBuilder;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import lombok.extern.slf4j.Slf4j;
 
 @Singleton
+@Slf4j
 public class TimesheetService {
 
     private final RxHttpClient httpClient;
@@ -30,11 +32,17 @@ public class TimesheetService {
         this.configuration = configuration;
     }
 
-    public Single<String> fetchOneTimesheet(Integer id) {
+    public Single<String> retrieveTimesheets(Integer id, String startDate, String endDate) {
+        log.debug("id = {}, startDate = {}, endDate = {}", id, startDate, endDate);
         URI timesheetUri = UriBuilder.of(uri)
             .queryParam("ids", id)
+            .queryParam("start_date", startDate)
+            .queryParam("end_date", endDate)
             .build();
-        Flowable<String> response =  httpClient.retrieve(GET(timesheetUri).header("Authorization", "Bearer " + configuration.getApiToken()), String.class);
+        log.info("Doing an HTTP GET on '{}'", timesheetUri.toString());
+        Flowable<String> response =  httpClient.retrieve(GET(timesheetUri)
+                .header("Authorization", "Bearer " + configuration.getApiToken())
+                .header("Content-Type", "application/json"), String.class);
         return response.first("");
     }
                 

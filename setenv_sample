@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Copy this file to setenv, add execute permissions, and set these values as appropriate:
+export TSHEETS_REST_TOKEN=YourTsheetsAccessToken
+

@@ -1,3 +1,9 @@
 micronaut:
   application:
     name: tsheets-proxy
+  server:
+    context-path: /api/v1
+
+tsheets:
+  api-version: v1
+  api-token: ${TSHEETS_REST_TOKEN}

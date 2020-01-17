@@ -1,4 +1,4 @@
-package ca.airspeed.tsheets;
+package ca.airspeed.tsheets.controller;
 
 import static io.micronaut.http.HttpRequest.GET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +17,7 @@ import io.micronaut.test.annotation.MicronautTest;
 public class HelloControllerTest {
 
     @Inject
-    @Client("/")
+    @Client("/api/v1")
     private RxHttpClient client;
 
     @Test

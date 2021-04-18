@@ -1,7 +1,9 @@
 plugins {
-    id "net.ltgt.apt-eclipse" version "0.21"
-    id "com.github.johnrengelman.shadow" version "5.0.0"
-    id "application"
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "io.micronaut.application" version "1.2.0"
+    id "com.pasam.gradle.buildinfo" version "0.1.3"
+    id "org.owasp.dependencycheck" version "6.1.2"
+    id "jacoco"
 }
 
 
@@ -11,7 +13,12 @@ group "ca.airspeed"
 
 repositories {
     mavenCentral()
-    maven { url "https://jcenter.bintray.com" }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
 }
 
 configurations {
@@ -19,8 +26,17 @@ configurations {
     developmentOnly 
 }
 
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("ca.airspeed.tsheets.*")
+    }
+}
+
 dependencies {
-    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok"
     annotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     annotationProcessor "io.micronaut:micronaut-inject-java"
     annotationProcessor "io.micronaut:micronaut-validation"
@@ -30,7 +46,7 @@ dependencies {
     implementation "io.micronaut:micronaut-runtime"
     implementation "io.micronaut:micronaut-http-server-netty"
     implementation "io.micronaut:micronaut-http-client"
-    implementation "org.projectlombok:lombok:$lombokVersion"
+    compileOnly "org.projectlombok:lombok"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
     testAnnotationProcessor platform("io.micronaut:micronaut-bom:$micronautVersion")
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
@@ -40,20 +56,28 @@ dependencies {
 }
 
 test.classpath += configurations.developmentOnly
-
-mainClassName = "ca.airspeed.tsheets.Application"
 // use JUnit 5 platform
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
-tasks.withType(JavaCompile){
-    options.encoding = "UTF-8"
-    options.compilerArgs.add('-parameters')
+jacocoTestReport {
+    dependsOn test
+    afterEvaluate {
+        classDirectories.from = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: '**/Application.*')
+        })
+    }
+}
+
+application {
+    mainClass.set("ca.airspeed.tsheets.Application")
+}
+
+dockerBuild {
+    images = ["bschalme/timesheet-fetcher:$project.version", "bschalme/timesheet-fetcher:latest"]
 }
 
 shadowJar {
     mergeServiceFiles()
 }
-
-run.classpath += configurations.developmentOnly
-run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')

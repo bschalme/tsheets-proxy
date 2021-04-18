@@ -7,7 +7,7 @@ four GCM ciphers. Java 8 and higher have these ciphers, but not Java 7.
 
 1. ./gradlew build
 2. ./gradlew run
-3. Browse to or do an HTTP GET on localhost:8080/hello
+3. Browse to or do an HTTP GET on localhost:8080/api/v1/hello
 
 # Docker
 
@@ -15,4 +15,4 @@ Replace username with yours:
 
 1. docker build -t username/tsheets-proxy:latest .
 2. docker run username/tsheets-proxy
-3. Browse to or do an HTTP GET on localhost:8080/hello
+3. Browse to or do an HTTP GET on localhost:8080/api/v1/hello

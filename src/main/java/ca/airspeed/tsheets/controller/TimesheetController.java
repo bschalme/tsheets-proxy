@@ -3,7 +3,7 @@ package ca.airspeed.tsheets.controller;
 import static io.micronaut.http.MediaType.APPLICATION_JSON;
 import static io.micronaut.http.hateoas.Link.SELF;
 
-import javax.annotation.Nullable;
+import io.micronaut.core.annotation.Nullable;
 
 import ca.airspeed.tsheets.service.TimesheetService;
 import io.micronaut.http.HttpRequest;
